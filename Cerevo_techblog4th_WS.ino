@@ -44,7 +44,10 @@ ESP8266WebServer server_8080(8080);
 
 /* set I2C library*/
 #include <Wire.h>
-#define ADDR1  0x64
+////
+#define ADDR1  0x60
+#define GPIO_SERVO 16
+#define GPIO_LED 12
 
 #define command_start  0
 #define command_stop   1
@@ -52,8 +55,8 @@ ESP8266WebServer server_8080(8080);
 #define forward       0x01
 #define reverse       0x02
 
-#define LED_H       (digitalWrite( 12, HIGH ))
-#define LED_L       (digitalWrite( 12, LOW ))
+#define LED_H       (digitalWrite(GPIO_LED, HIGH))
+#define LED_L       (digitalWrite(GPIO_LED, LOW))
 
 char state = command_stop;
 int offset = 0;
@@ -145,9 +148,10 @@ void setup() {
 	Serial.println();
 	Serial.print("Configuring access point...");
 
-  Wire.begin(4, 14);
   delay(40);
   
+	////
+	Wire.begin();
 	/* You can remove the password parameter if you want the AP to be open. */
 	WiFi.softAP(ssid, password);
 
@@ -170,9 +174,9 @@ void setup() {
 	server.begin();
   server_8080.begin();
 	Serial.println("HTTP server started");
-  pinMode(16,OUTPUT);
-  pinMode(12,OUTPUT);
   delay(100);
+	pinMode(GPIO_SERVO, OUTPUT);
+	pinMode(GPIO_LED, OUTPUT);
 }
 
 void loop() {
